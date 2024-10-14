@@ -12,6 +12,7 @@ def galgjewoord(woorden):
     return random.choice(woorden).lower()
 
 def start():
+    textfile = open('woorden.txt', 'a')
     woorden = woorden_naar_lijst()
     spelwoord = galgjewoord(woorden)
     goed = []
@@ -20,7 +21,9 @@ def start():
     pogingen = 0
 
     print(f'{Fore.LIGHTMAGENTA_EX}Welkom bij het spelletje Galgje.\nIn dit spel is er een willekeurig woord gekozen uit een lijst je kiest steeds 1 letter en dan krijg je te zien of hij in het woord zit of niet.\nHet spel stop als je alle letters uit het woord geraden hebt of 6 letters gekozen hebt die er niet in staan SUCCES.')
-
+    naam = input('Wat is je naam:')
+    print(f'Nou {naam} we gaan beginnen\nSucces')
+    time.sleep(1)
     while pogingen < maxpogingen:
 
         raadwoord = ''.join([letter if letter in goed else '.' for letter in spelwoord])
@@ -43,19 +46,36 @@ def start():
             if keuze not in goed:
                 goed.append(keuze)
                 print(f'Hatsaa deze letter {Fore.GREEN}{keuze}{Fore.RESET}{Fore.LIGHTMAGENTA_EX} zit in het woord.')
+                time.sleep(1)
             else:
                 print(f'SUKKEL je hebt deze letter {Fore.GREEN}{keuze}{Fore.RESET}{Fore.LIGHTMAGENTA_EX} al geraden.')
+                time.sleep(1)
         else:
             if keuze not in fout:
                 fout.append(keuze)
                 pogingen += 1
                 print(f'{Fore.RED}{keuze}{Fore.RESET}{Fore.LIGHTMAGENTA_EX} zit niet in het woord.' )
+                time.sleep(1)
             else:
                 print(f'Je hebt de letter {Fore.RED}{keuze}{Fore.RESET}{Fore.LIGHTMAGENTA_EX}al fout geraden.')
+                time.sleep(1)
 
-        # Controleer of de speler het woord heeft geraden
+
         if all(letter in goed for letter in spelwoord):
             print(f'\nGefeliciteerd! Je hebt het woord {spelwoord} geraden!')
-            break
+            jaofnee = input(
+                'Omdat je hebt gewonnen mag je een woord toevoegen aan galgje wil je dit doen?\ntype y of n: ').lower()
+            if jaofnee == 'y':
+                toevoegen = input('Wat leuk welk woord zou je willen toevoegen en houw het een beetje leuk:').lower()
+                if toevoegen in woorden:
+                    print('Het bestond al maar nu weet je het zeker:)')
+                    break
+                else:
+                    textfile.write(toevoegen + '\n')
+                    textfile.close()
+                    break
+            if jaofnee == 'n':
+                print('Ook niks toevoegen is goed bedankt voor het spelen')
+                break
     else:
         print(f'{Fore.RED}Je hebt verloren. Het woord was {spelwoord}.{Fore.RESET}')
